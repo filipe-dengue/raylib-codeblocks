@@ -1,6 +1,6 @@
 /*******************************************************************************************
 *
-*   raygui v5.0 - A simple and easy-to-use immediate-mode gui library
+*   raygui v5.1-dev - A simple and easy-to-use immediate-mode gui library
 *
 *   DESCRIPTION:
 *       raygui is a tools-dev-focused immediate-mode-gui library based on raylib but also
@@ -145,6 +145,8 @@
 *           Draw text bounds rectangles for debug
 *
 *   VERSIONS HISTORY:
+*       6.0 (xx-xx-2027)  ADDED: Advance controls set?
+*
 *       5.0 (20-Jul-2026) ADDED: NEW control: GuiTabBar()
 *                         ADDED: Support up to 512 icons (v500)
 *                         ADDED: Support icons baking into font atlas image
@@ -353,9 +355,9 @@
 #define RAYGUI_H
 
 #define RAYGUI_VERSION_MAJOR 5
-#define RAYGUI_VERSION_MINOR 0
+#define RAYGUI_VERSION_MINOR 1
 #define RAYGUI_VERSION_PATCH 0
-#define RAYGUI_VERSION  "5.0"
+#define RAYGUI_VERSION  "5.1-dev"
 
 #if !defined(RAYGUI_STANDALONE)
     #include "raylib.h"
@@ -1585,6 +1587,8 @@ static void UnloadCodepoints(int *codepoints);               // -- GuiLoadStyle(
 static unsigned char *DecompressData(const unsigned char *compData, int compDataSize, int *dataSize); // -- GuiLoadStyle()
 
 static Vector2 MeasureTextEx(Font font, const char *text, float fontSize, float spacing); // Measure string size for Font
+
+static void DrawTextCodepoint(Font font, int codepoint, Vector2 position, float fontSize, Color tint); // Draw one character (codepoint)
 //-------------------------------------------------------------------------------
 
 // raylib functions already implemented in raygui
@@ -3881,7 +3885,7 @@ int GuiTabBar(Rectangle bounds, const char *text, int *hscroll, int *active)
 
 // Tab Bar control, using text entries list and returning focus entry
 // NOTE: In case of tab close result, consider focused tab
-// TODO: Reeplace GuiToggle() usage for custom implementation for the TABS
+// TODO: Replace GuiToggle() usage for custom implementation for the TABS
 int GuiTabBarEx(Rectangle bounds, char **text, int count, int *hscroll, int *active, int *focus)
 {
     int result = RESULT_NONE;
@@ -4157,22 +4161,22 @@ int GuiColorBarHue(Rectangle bounds, const char *text, float *hue)
     {
         // Draw hue bar:color bars
         // NOTE: Using DrawRectangleGradientEx(bounds, color1, color2, color2, color1);
-        DrawRectangleGradientEx(RAYGUI_CLITERAL(Rectangle){ bounds.x, bounds.y, bounds.width, bounds.height/6.0f }, 
+        DrawRectangleGradientEx(RAYGUI_CLITERAL(Rectangle){ bounds.x, bounds.y, bounds.width, bounds.height/6.0f },
             Fade(RAYGUI_CLITERAL(Color){ 255, 0, 0, 255 }, guiAlpha), Fade(RAYGUI_CLITERAL(Color){ 255, 255, 0, 255 }, guiAlpha),
             Fade(RAYGUI_CLITERAL(Color){ 255, 255, 0, 255 }, guiAlpha), Fade(RAYGUI_CLITERAL(Color){ 255, 0, 0, 255 }, guiAlpha));
-        DrawRectangleGradientEx(RAYGUI_CLITERAL(Rectangle){ bounds.x, bounds.y + 1*(bounds.height/6.0f), bounds.width, bounds.height/6.0f }, 
+        DrawRectangleGradientEx(RAYGUI_CLITERAL(Rectangle){ bounds.x, bounds.y + 1*(bounds.height/6.0f), bounds.width, bounds.height/6.0f },
             Fade(RAYGUI_CLITERAL(Color){ 255, 255, 0, 255 }, guiAlpha), Fade(RAYGUI_CLITERAL(Color){ 0, 255, 0, 255 }, guiAlpha),
             Fade(RAYGUI_CLITERAL(Color){ 0, 255, 0, 255 }, guiAlpha), Fade(RAYGUI_CLITERAL(Color){ 255, 255, 0, 255 }, guiAlpha));
-        DrawRectangleGradientEx(RAYGUI_CLITERAL(Rectangle){ bounds.x, bounds.y + 2*(bounds.height/6.0f), bounds.width, bounds.height/6.0f }, 
+        DrawRectangleGradientEx(RAYGUI_CLITERAL(Rectangle){ bounds.x, bounds.y + 2*(bounds.height/6.0f), bounds.width, bounds.height/6.0f },
             Fade(RAYGUI_CLITERAL(Color){ 0, 255, 0, 255 }, guiAlpha), Fade(RAYGUI_CLITERAL(Color){ 0, 255, 255, 255 }, guiAlpha),
             Fade(RAYGUI_CLITERAL(Color){ 0, 255, 255, 255 }, guiAlpha), Fade(RAYGUI_CLITERAL(Color){ 0, 255, 0, 255 }, guiAlpha));
-        DrawRectangleGradientEx(RAYGUI_CLITERAL(Rectangle){ bounds.x, bounds.y + 3*(bounds.height/6.0f), bounds.width, bounds.height/6.0f }, 
+        DrawRectangleGradientEx(RAYGUI_CLITERAL(Rectangle){ bounds.x, bounds.y + 3*(bounds.height/6.0f), bounds.width, bounds.height/6.0f },
             Fade(RAYGUI_CLITERAL(Color){ 0, 255, 255, 255 }, guiAlpha), Fade(RAYGUI_CLITERAL(Color){ 0, 0, 255, 255 }, guiAlpha),
             Fade(RAYGUI_CLITERAL(Color){ 0, 0, 255, 255 }, guiAlpha), Fade(RAYGUI_CLITERAL(Color){ 0, 255, 255, 255 }, guiAlpha));
-        DrawRectangleGradientEx(RAYGUI_CLITERAL(Rectangle){ bounds.x, bounds.y + 4*(bounds.height/6.0f), bounds.width, bounds.height/6.0f }, 
+        DrawRectangleGradientEx(RAYGUI_CLITERAL(Rectangle){ bounds.x, bounds.y + 4*(bounds.height/6.0f), bounds.width, bounds.height/6.0f },
             Fade(RAYGUI_CLITERAL(Color){ 0, 0, 255, 255 }, guiAlpha), Fade(RAYGUI_CLITERAL(Color){ 255, 0, 255, 255 }, guiAlpha),
             Fade(RAYGUI_CLITERAL(Color){ 255, 0, 255, 255 }, guiAlpha), Fade(RAYGUI_CLITERAL(Color){ 0, 0, 255, 255 }, guiAlpha));
-        DrawRectangleGradientEx(RAYGUI_CLITERAL(Rectangle){ bounds.x, bounds.y + 5*(bounds.height/6.0f), bounds.width, bounds.height/6.0f }, 
+        DrawRectangleGradientEx(RAYGUI_CLITERAL(Rectangle){ bounds.x, bounds.y + 5*(bounds.height/6.0f), bounds.width, bounds.height/6.0f },
             Fade(RAYGUI_CLITERAL(Color){ 255, 0, 255, 255 }, guiAlpha), Fade(RAYGUI_CLITERAL(Color){ 255, 0, 0, 255 }, guiAlpha),
             Fade(RAYGUI_CLITERAL(Color){ 255, 0, 0, 255 }, guiAlpha), Fade(RAYGUI_CLITERAL(Color){ 255, 0, 255, 255 }, guiAlpha));
     }
@@ -4214,7 +4218,7 @@ int GuiColorPicker(Rectangle bounds, const char *text, Color *color)
     // NOTE: this conversion can cause low hue-resolution, if the r, g and b value are very similar, which causes the hue bar to shift around when only the GuiColorPanel is used
     Vector3 hsv = ConvertRGBtoHSV(RAYGUI_CLITERAL(Vector3){ (*color).r/255.0f, (*color).g/255.0f, (*color).b/255.0f });
 
-    if (result != RESULT_CHANGED) result = GuiColorBarHue(boundsHue, NULL, &hsv.x);
+    result = GuiColorBarHue(boundsHue, NULL, &hsv.x);
 
     //color.a = (unsigned char)(GuiColorBarAlpha(boundsAlpha, (float)color.a/255.0f)*255.0f);
     Vector3 rgb = ConvertHSVtoRGB(hsv);
@@ -4449,11 +4453,11 @@ int GuiTextInputBox(Rectangle bounds, const char *title, const char *message, ch
     Rectangle textBounds = { 0 };
     if (message != NULL)
     {
-        int textSize = GuiGetTextWidth(message) + 2;
+        int messageTextSize = GuiGetTextWidth(message) + 2;
 
-        textBounds.x = bounds.x + bounds.width/2 - textSize/2;
+        textBounds.x = bounds.x + bounds.width/2 - messageTextSize/2;
         textBounds.y = bounds.y + RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT + messageInputHeight/4 - (float)GuiGetStyle(DEFAULT, TEXT_SIZE)/2;
-        textBounds.width = (float)textSize;
+        textBounds.width = (float)messageTextSize;
         textBounds.height = (float)GuiGetStyle(DEFAULT, TEXT_SIZE);
     }
 
@@ -4641,8 +4645,8 @@ void GuiLoadStyle(const char *fileName)
                 {
                     case 'v':
                     {
-                        sscanf(buffer, "v %d", &version);
-                    }
+                        sscanf(buffer, "v %u", &version);
+                    } break;
                     case 'p':
                     {
                         // Style property: p <control_id> <property_id> <property_value> <property_name>
@@ -5805,6 +5809,7 @@ static void GuiTooltip(Rectangle controlRec)
 {
     if (!guiLocked && guiTooltip && (guiTooltipPtr != NULL) && !guiControlExclusiveMode)
     {
+        // TODO: Remove MeasureTextEx(), implement logic directly or add custom GuiMeasureText()
         Vector2 textSize = MeasureTextEx(guiFont, guiTooltipPtr, (float)GuiGetStyle(DEFAULT, TEXT_SIZE),
             (float)GuiGetStyle(DEFAULT, TEXT_SPACING));
 
@@ -5812,11 +5817,10 @@ static void GuiTooltip(Rectangle controlRec)
 
         int lineCount = 0;
         GetTextLines(guiTooltipPtr, &lineCount); // Only using the line count
-        if ((controlRec.y + controlRec.height + textSize.y + 4 + 8*lineCount) > GetScreenHeight())
-            controlRec.y -= (controlRec.height + textSize.y + 4 + 8*lineCount);
+        if ((controlRec.y + controlRec.height + textSize.y + 4 + GuiGetStyle(DEFAULT, TEXT_LINE_SPACING)*lineCount) > GetScreenHeight())
+            controlRec.y -= (controlRec.height + textSize.y + 4 + GuiGetStyle(DEFAULT, TEXT_LINE_SPACING)*lineCount);
 
-        // TODO: Probably TEXT_LINE_SPACING should be considered on panel size instead of hardcoding 8.0f
-        GuiPanel(RAYGUI_CLITERAL(Rectangle){ controlRec.x, controlRec.y + controlRec.height + 4, textSize.x + 16, textSize.y + 8.0f*lineCount }, NULL);
+        GuiPanel(RAYGUI_CLITERAL(Rectangle){ controlRec.x, controlRec.y + controlRec.height + 4, textSize.x + 16, textSize.y + GuiGetStyle(DEFAULT, TEXT_LINE_SPACING)*lineCount }, NULL);
 
         int textPadding = GuiGetStyle(LABEL, TEXT_PADDING);
         int textAlignment = GuiGetStyle(LABEL, TEXT_ALIGNMENT);
