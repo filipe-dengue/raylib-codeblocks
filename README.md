@@ -14,6 +14,6 @@ Passo a passo para rodar o projeto:
 6º - Agora você pode fechar essa janela e executar o jogo
 
 # Links Úteis
-Site do Raylib: raylib.com
+[Site do Raylib](https://www.raylib.com/)
 
-Repositório Raylib: https://github.com/raysan5/raylib
+[Repositório Raylib](https://github.com/raysan5/raylib)

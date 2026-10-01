@@ -44,11 +44,11 @@ int main(){
     sprintf(bufferVida, "Quantidade de Vida: %d", vidas);
     sprintf(bufferMoeda, "Quantidade de Moedas: %d", pontuacao);
 
-    Texture2D img = LoadTexture("img/oar2.png");
+    Texture2D img = LoadTexture("img/et.png");
 
     // Loop principal
     while(!WindowShouldClose()){
-        // LÛgica
+        // L√≥gica
         dt = GetFrameTime();
 
         if(IsKeyDown(KEY_W) && posCirculo.y > raio){
@@ -65,7 +65,7 @@ int main(){
             posCirculo.x += VELOCIDADE * dt;
         }
 
-        // Checa colis„o
+        // Checa colis√£o
         if(CheckCollisionCircleRec(posCirculo, raio, rec)){
             vidas--;
 
