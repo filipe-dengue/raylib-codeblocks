@@ -12,3 +12,8 @@ Passo a passo para rodar o projeto:
 5º - Nessa aba vá no botão com os 3 pontos ("...") e seleciona a pasta do compilador novo
 
 6º - Agora você pode fechar essa janela e executar o jogo
+
+# Links Úteis
+Site do Raylib: raylib.com
+
+Repositório Raylib: https://github.com/raysan5/raylib
